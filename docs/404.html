@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EmulatR Documentation has moved</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;line-height:1.55;max-width:44em;
+     margin:16vh auto;padding:0 6vw;color:#222;background:#fff}
+h1{font-size:1.5em;border-bottom:2px solid #333;padding-bottom:.3em}
+a{color:#0b5fa5}
+.u{font-size:1.1em;font-weight:bold;word-break:break-all}
+.n{color:#555;font-size:.92em;margin-top:2.2em;border-top:1px solid #ddd;
+   padding-top:1em}
+</style>
+<script>
+// DEEP-LINK FORWARDING.  Both sites are exports of the same Help & Manual
+// project, so a page keeps its filename across the move: only the repository
+// segment of the path changes.  Rewrite that one segment and an old bookmark
+// lands on the SAME page in the new guide rather than on an apology.
+//
+// GitHub Pages serves this file for any path it cannot resolve under
+// /EmulatRAppUni/, which is why the forwarding lives here rather than in a
+// per-page stub -- 157 stubs would all have to be maintained.
+(function () {
+  try {
+    var OLD = "/EmulatRAppUni/";
+    var NEW = "https://emulatrapp.github.io/EmulatR-docs/";
+    var p = window.location.pathname;
+    var i = p.indexOf(OLD);
+    var tail = (i >= 0) ? p.substring(i + OLD.length) : "";
+
+    // Keep the query string: the guide addresses pages as
+    // index.html?some-topic.html, so the topic lives in the query, not
+    // the path, and dropping it would land the reader on the front page.
+    var target = NEW + tail + (window.location.search || "");
+
+    var a = document.getElementById("go");
+    if (a) { a.href = target; a.textContent = target; }
+    window.location.replace(target);
+  } catch (e) {
+    window.location.replace("https://emulatrapp.github.io/EmulatR-docs/");
+  }
+})();
+</script>
+</head>
+<body>
+<h1>The EmulatR documentation has moved</h1>
+
+<p>This page now lives in the new documentation site, and you are being
+forwarded to it:</p>
+
+<p class="u"><a id="go" href="https://emulatrapp.github.io/EmulatR-docs/">https://emulatrapp.github.io/EmulatR-docs/</a></p>
+
+<p>If nothing happens, follow the link above.</p>
+
+<p class="n">The guide moved to its own repository so that it can be published
+independently of the source tree. The copy that used to live here is no longer
+updated and describes an older release &mdash; please update any bookmark you
+have.</p>
+</body>
+</html>
