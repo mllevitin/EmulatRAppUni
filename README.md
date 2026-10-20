@@ -54,6 +54,68 @@ ES40 and ES45 platform manifests are scaffolded but not yet validated.
 
 EmulatR builds with **CMake** and a **C++20 MSVC** compiler. The reference kit is **Qt 6.10.2 / MSVC 2022 (64-bit)** through Qt Creator; the emulator core is deliberately Qt-free (Qt is used only by the console / UI front end).
 
+### Linux build with Docker Compose
+
+Install Docker Engine with Docker Compose, then run from the checkout:
+
+```bash
+bash scripts/build_container.sh
+```
+
+The Debian 13 (`trixie-slim`) build image provides GCC, CMake, Ninja,
+[Qt 6.8](https://packages.debian.org/trixie/qt6-base-dev), spdlog, fmt, and
+Python 3. SoftFloat and doctest are already vendored in this repository.
+The image contains the toolchain and build driver; the checkout is bind-mounted
+read-only at `/workspace`. Only `out/` is mounted writable. The wrapper creates
+that directory and runs the container with your UID/GID, so generated files
+belong to you. No host Qt or compiler installation is needed.
+
+The command builds the `Emulatr` and `Emulatr_tests` targets in
+`out/build/container-release/`. Subsequent invocations reuse that build tree.
+To select another configuration, change parallelism, or pass CMake options:
+
+```bash
+CMAKE_BUILD_TYPE=Debug CMAKE_BUILD_PARALLEL_LEVEL=2 \
+  bash scripts/build_container.sh -DEMULATR_TRACE_HOOKS=ON
+```
+
+Debug artifacts are in `out/build/container-debug/`; RelWithDebInfo and
+MinSizeRel are also supported. Extra CMake options persist in the selected
+build tree's cache until explicitly changed or that build directory is removed.
+
+The equivalent direct Compose build is:
+
+```bash
+mkdir -p out
+LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" docker compose run --build --rm builder
+```
+
+After a successful build, run the existing doctest suite inside the same
+environment, with its working directory set to the build tree:
+
+```bash
+LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" docker compose run --rm \
+  --workdir /workspace/out/build/container-release builder ./Emulatr_tests
+```
+
+For an interactive build shell:
+
+```bash
+LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" docker compose run --rm builder bash
+```
+
+Build artifacts link to the container's system libraries; run them in this
+environment or on a compatible Linux host. Firmware is not required to compile;
+booting a guest requires a separately supplied firmware image.
+
+The build image has been verified on Linux x86_64 with GCC 14.2.0, CMake
+3.31.6, and Qt 6.8.2. A complete source build currently also requires fixes for
+stale CMake file references, optional firmware staging, case-sensitive includes,
+and `uint64_t`/`quint64` type mismatches. The container makes these failures
+reproducible without installing the toolchain on the host.
+
+### CMake options
+
 Selected build-time CMake options:
 
 | Option | Effect |

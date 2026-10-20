@@ -1,0 +1,21 @@
+services:
+  builder:
+    build:
+      context: ./docker/builder
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    environment:
+      CMAKE_BUILD_TYPE: "${CMAKE_BUILD_TYPE:-Release}"
+      CMAKE_BUILD_PARALLEL_LEVEL: "${CMAKE_BUILD_PARALLEL_LEVEL:-4}"
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+        read_only: true
+      - type: bind
+        source: ./out
+        target: /workspace/out
+        bind:
+          create_host_path: false
+    command: ["bash", "/usr/local/bin/build-emulatr"]
+    init: true
